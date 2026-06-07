@@ -2,6 +2,36 @@
 
 Codenamen = Future Crew leden.
 
+## [0.4.0-Skaven] — 2026-06-07
+
+Fase 4 — **audio is live**. De originele Second Reality soundtrack speelt nu in de browser.
+
+### Toegevoegd
+- **`public/audio/MUSIC0.S3M`** (382 KB) — originele tracker-module "UnreaL ][ - The 2ND Reality" door **Skaven** (Vesa Norilo) en **Purple Motion** (Jonne Valtonen), uit `SecondReality_source/MAIN/`. Licentie: Unlicense (public domain via SecondReality repo).
+- **`public/chiptune3/`** (chiptune3.js + chiptune3.worklet.js + libopenmpt.worklet.js + LICENSE) — chiptune3 v0.8.7 wrapper rond libopenmpt voor S3M-playback via AudioWorklet. chiptune3 = MIT, libopenmpt = BSD. Bestanden los in `public/` zodat de browser de worklet's relative `import './libopenmpt.worklet.js'` zelf kan resolven (Vite bundelt geen AudioWorklet-modules recursief).
+- **`src/engine/audio.ts`** volledig herschreven: `resume()` doet lazy dynamic `import()` van chiptune3 (BASE_URL-aware), op `onInitialized` zet repeat-count -1 + volume 0.45 + start playback van MUSIC0.S3M
+- **`src/engine/input.ts`**: `M` toggle mute (kbd only voor v0.4.0; touch-toggle volgt later)
+- **`src/engine/hud.ts`**: `♪` indicator + `♪ muted` als mute aan
+- **`src/main.ts`**: audio pause/unpause synct met timeline pause
+- **`src/vite-env.d.ts`**: types voor `import.meta.env.BASE_URL`
+
+### Niet (parkeren voor v0.4.x)
+- Per-channel events naar shader-uniforms (drum-hit triggert scene-flash)
+- Timeline-sync op tracker-positie i.p.v. wall clock
+- Volume-slider in HUD (alleen mute-toggle voor nu)
+- MUSIC1.S3M alternatief / track-switcher
+
+### Verifieerd
+- `npx tsc --noEmit` schoon
+- `npm run build`: 16 modules, **16.40 KB JS / 6.26 KB gzip** (worklet + S3M lazy-loaded, niet in cold-start budget)
+- `npm run dev`: alle endpoints 200 (chiptune3/*, audio/MUSIC0.S3M)
+- **Visuele/auditieve verificatie pending — gebruiker:** browser openen, tap canvas → S3M speelt af in loop; HUD toont `♪` na metadata-load; `M`-toets toggleert mute → `♪ muted`; pause via long-press of Esc pauzeert ook tracker.
+
+### Credits
+- **Skaven** (Vesa Norilo) & **Purple Motion** (Jonne Valtonen) — muziek (1993)
+- **Future Crew** — origineel, Unlicense
+- **chiptune3** door DrSnuggles + **libopenmpt** door OpenMPT-team — playback (MIT/BSD)
+
 ## [0.3.0-Pixel] — 2026-06-07
 
 Tweede hero-decompile: **DOTS** (fase 1+2 — Lissajous + cirkel-met-gravity).

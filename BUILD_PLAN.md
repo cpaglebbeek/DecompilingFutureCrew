@@ -37,12 +37,17 @@ Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 - [x] Scene `src/scenes/dots.ts` in timeline (12s tussen GLENZ en ALKU)
 - [ ] *(Parkeren voor v0.3.x)*: fase 3 spiraal, fase 4 random scatter, trails, background-image
 
-## Fase 4 — Audio (v0.4.x-Skaven)
+## Fase 4 — Audio (v0.4.0-Skaven) ✓ huidige
 
-- [ ] WebAudio AudioContext + master gain
-- [ ] S3M-tracker player integratie (libxmp-lite WASM of chiptune2.js)
-- [ ] Sync timeline op tracker-positie (i.p.v. wall clock)
-- [ ] Stuur per-scene events (channel triggers naar shader-uniforms voor reactive effects)
+- [x] WebAudio AudioContext + master gain (via chiptune3-wrapper)
+- [x] S3M-tracker player integratie — **chiptune3** (MIT) rond **libopenmpt** (BSD)
+- [x] MUSIC0.S3M (originele Skaven/Purple Motion track) live afspelen op user-gesture
+- [x] Mute-toggle (`M`-toets)
+- [x] Pause-sync (timeline-pause → tracker-pause)
+- [ ] *(v0.4.x)* Timeline-sync op tracker-positie
+- [ ] *(v0.4.x)* Per-channel events naar shader-uniforms (reactive scenes)
+- [ ] *(v0.4.x)* Volume-slider in HUD
+- [ ] *(v0.4.x)* MUSIC1.S3M switcher
 
 ## Fase 5 — Volume-uitbreiding (v0.5.x-Purple Motion)
 

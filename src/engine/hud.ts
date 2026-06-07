@@ -39,7 +39,7 @@ export class Hud {
     this.statusEl = status;
   }
 
-  tick(dt: number, sceneName: string, paused: boolean): void {
+  tick(dt: number, sceneName: string, paused: boolean, muted = false): void {
     this.frames++;
     this.fpsTimer += dt;
     if (this.fpsTimer >= 0.5) {
@@ -49,7 +49,10 @@ export class Hud {
       this.fpsTimer = 0;
     }
     if (this.sceneEl.textContent !== sceneName) this.sceneEl.textContent = sceneName;
-    const status = paused ? "[PAUSE]" : "";
+    const parts: string[] = [];
+    if (paused) parts.push("[PAUSE]");
+    parts.push(muted ? "♪ muted" : "♪");
+    const status = parts.join(" ");
     if (this.statusEl.textContent !== status) this.statusEl.textContent = status;
   }
 

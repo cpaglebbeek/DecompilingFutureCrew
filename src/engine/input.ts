@@ -4,6 +4,7 @@ export class Input {
   onBack: (() => void) | null = null;
   onPause: (() => void) | null = null;
   onToggleHud: (() => void) | null = null;
+  onToggleMute: (() => void) | null = null;
 
   private pointerDownAt = 0;
   private lastTapAt = 0;
@@ -67,6 +68,10 @@ export class Input {
       case "h":
       case "H":
         this.onToggleHud?.();
+        break;
+      case "m":
+      case "M":
+        this.onToggleMute?.();
         break;
     }
   }

@@ -40,6 +40,11 @@ npm run build    # → dist/
 ## Licentie
 
 **AGPL-3.0** — code in deze repo.
+
+Externe componenten in `public/`:
+- **`public/audio/MUSIC0.S3M`** — `"UnreaL ][ - The 2ND Reality"` door **Skaven** (Vesa Norilo) & **Purple Motion** (Jonne Valtonen), 1993. Bron: `SecondReality_source/MAIN/` (Unlicense, public domain).
+- **`public/chiptune3/`** — chiptune3 wrapper (MIT) + libopenmpt worklet (BSD). Maintainer: [DrSnuggles](https://github.com/DrSnuggles/chiptune).
+
 Originele Second Reality source: Unlicense (public domain), zie `source/NOTE.md`.
 
 ## Codenamen

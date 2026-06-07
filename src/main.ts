@@ -24,8 +24,12 @@ const timeline = new Timeline([
 input.onActivate = () => audio.resume();
 input.onSkip = () => timeline.skip();
 input.onBack = () => timeline.back();
-input.onPause = () => timeline.togglePause();
+input.onPause = () => {
+  timeline.togglePause();
+  audio.setPaused(timeline.paused);
+};
 input.onToggleHud = () => hud.toggle();
+input.onToggleMute = () => audio.toggleMute();
 
 let prev = performance.now();
 function frame(now: number) {
@@ -33,7 +37,7 @@ function frame(now: number) {
   prev = now;
   renderer.beginFrame();
   timeline.update(dt, renderer, audio);
-  hud.tick(dt, timeline.currentName, timeline.paused);
+  hud.tick(dt, timeline.currentName, timeline.paused, audio.isMuted);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
