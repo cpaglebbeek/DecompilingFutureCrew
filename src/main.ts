@@ -7,6 +7,7 @@ import { starfieldScene } from "./scenes/starfield.js";
 import { glenzScene } from "./scenes/glenz.js";
 import { dotsScene } from "./scenes/dots.js";
 import { tunneliScene } from "./scenes/tunneli.js";
+import { waterScene } from "./scenes/water.js";
 import { alkuScene } from "./scenes/alku.js";
 
 const canvas = document.getElementById("stage") as HTMLCanvasElement;
@@ -20,6 +21,7 @@ const timeline = new Timeline([
   { name: "GLENZ",     durationMs: 10000, scene: glenzScene },
   { name: "DOTS",      durationMs: 12000, scene: dotsScene },
   { name: "TUNNELI",   durationMs: 12000, scene: tunneliScene },
+  { name: "WATER",     durationMs: 10000, scene: waterScene },
   { name: "ALKU",      durationMs: 3000,  scene: alkuScene },
 ]);
 
