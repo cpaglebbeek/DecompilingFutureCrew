@@ -4,6 +4,7 @@ import { AudioEngine } from "./engine/audio.js";
 import { Input } from "./engine/input.js";
 import { Hud } from "./engine/hud.js";
 import { starfieldScene } from "./scenes/starfield.js";
+import { glenzScene } from "./scenes/glenz.js";
 import { alkuScene } from "./scenes/alku.js";
 
 const canvas = document.getElementById("stage") as HTMLCanvasElement;
@@ -14,7 +15,8 @@ const hud = new Hud();
 
 const timeline = new Timeline([
   { name: "STARFIELD", durationMs: 8000, scene: starfieldScene },
-  { name: "ALKU",      durationMs: 4000, scene: alkuScene },
+  { name: "GLENZ",     durationMs: 10000, scene: glenzScene },
+  { name: "ALKU",      durationMs: 3000, scene: alkuScene },
 ]);
 
 input.onActivate = () => audio.resume();
