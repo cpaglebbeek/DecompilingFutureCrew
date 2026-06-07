@@ -29,7 +29,7 @@ decomp/<scene>/
 |--|--|--|--|
 | START | START | placeholder | — |
 | ALKU | ALKU | placeholder | — |
-| GLENZ | GLENZ | **eerste hero target** | `glenz/` |
+| GLENZ | GLENZ | **ge-port v0.2.0-Trug** ✓ | `glenz/` ASM_NOTES + port.ts/vert/frag |
 | DOTS | DOTS | hero target #2 | — |
 | 3DS | 3DS | parked (POV-Ray) | — |
 | LENS | LENS | tbd | — |

@@ -2,6 +2,32 @@
 
 Codenamen = Future Crew leden.
 
+## [0.2.0-Trug] — 2026-06-07
+
+Eerste echte decompile-port: **GLENZ**.
+
+### Toegevoegd
+- **`decomp/glenz/ASM_NOTES.md`** (volledig): source-vondst in `SecondReality_source/GLENZ/MAINTRAN.C`, mesh-data (8v/12e/6f), palet-XOR-translucentie-truc uitgelegd, 1993→2026 mapping-tabel
+- **`decomp/glenz/port.ts`**: vertex-data + GLENZ_FACES (6 faces met RGB+CMY kleuren letterlijk uit `0x04/08/10/20/40/80` palet-bit-codes) + mat4-helpers (perspective/translate/rotateX/Y/Z/multiply, geen extern dep)
+- **`decomp/glenz/port.vert`** + **`port.frag`**: MVP + emissive `u_color × u_alpha`
+- **`src/scenes/glenz.ts`**: VAO + indexed draw, 6 draw-calls (één per face-kleur), additive blending `gl.blendFunc(ONE, ONE)`, depth-test uit
+- Rotatie: `ry≈0.855 rad/s, rz≈1.344 rad/s` — herrekening van 1993 `ry+=7, rz+=11` per frame @ 70Hz in tenths-of-degree
+
+### Gewijzigd
+- `src/main.ts`: GLENZ-scene tussen STARFIELD en ALKU; ALKU verkort van 4s naar 3s
+- `index.html`: HUD-tekst versie-string `v0.2.0-Trug`
+
+### Verifieerd
+- `npx tsc --noEmit` schoon
+- `npm run build`: 13 modules, **11.13 KB JS / 4.47 KB gzip** (cold-start budget 150 KB)
+- `npm run dev`: `src/scenes/glenz.ts`, `decomp/glenz/port.ts`, `src/main.ts` allen 200
+- **Visuele verificatie pending**: kleurige roterende kubus met additieve face-mixing (gebruiker checkt)
+
+### Niet (uit scope v0.2.0)
+- Pixel-perfect VGA palet-OR reproduceren (modern reinterpretatie via echte WebGL2 blending)
+- Mode-X 320×240 non-square pixels
+- Hidden-edge tracking (volgt eventueel in 0.2.x als wireframe-overlay)
+
 ## [0.1.0-Marvel] — 2026-06-07
 
 Renderer-fundamenten + eerste echte scene. Bumpt naar 0.1.0 (Oranje — design-impact: scene-API stabiliseert rondom program-cache + fullscreen-quad helper).

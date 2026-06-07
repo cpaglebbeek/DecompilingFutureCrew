@@ -20,13 +20,14 @@ Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 - [x] STARFIELD als eerste echte fragment-shader scene (vervangt placeholder)
 - [ ] Fullscreen-API (F11 / `fullscreen` toggle) — uitgesteld naar 0.1.1 indien gewenst
 
-## Fase 2 — Eerste hero-decompile: GLENZ (v0.2.x-Trug)
+## Fase 2 — Eerste hero-decompile: GLENZ (v0.2.0-Trug) ✓ huidige
 
-- [ ] `source/` clone bekeken: GLENZ-asm geïdentificeerd
-- [ ] `decomp/glenz/ASM_NOTES.md` — wat doet het effect (translucent vector objects, BSP-sorteren of geen?)
-- [ ] `decomp/glenz/port.ts` — TypeScript port (vertex-data, transformatie)
-- [ ] `decomp/glenz/port.vert` + `port.frag` — moderne GLSL (additive blending, depth-test off)
-- [ ] Scene registreerd in timeline
+- [x] `source/` clone bekeken: GLENZ-mesh + pipeline uit `MAINTRAN.C` geïdentificeerd
+- [x] `decomp/glenz/ASM_NOTES.md` — palet-XOR-translucentie-truc uitgelegd, 1993→2026 mapping
+- [x] `decomp/glenz/port.ts` — TypeScript port (8 verts, 6 faces RGB+CMY, mat4-helpers)
+- [x] `decomp/glenz/port.vert` + `port.frag` — moderne GLSL (additive blending, depth-test off)
+- [x] Scene `src/scenes/glenz.ts` geregistreerd in timeline (10s tussen STARFIELD en ALKU)
+- [ ] *(Uit scope, voor 0.2.x)*: wireframe-edges, hidden-edge tracking, palet-OR pixel-perfect
 
 ## Fase 3 — Tweede hero-decompile: DOTS / PLASMA (v0.3.x-Pixel)
 
