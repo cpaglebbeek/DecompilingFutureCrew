@@ -2,6 +2,24 @@
 
 Codenamen = Future Crew leden.
 
+## [0.5.1-PurpleMotion] — 2026-06-07
+
+Vijfde scene: **WATER** (tribute via fragment-shader). Patch-level bump (Groen — alleen toevoegen, geen design-impact).
+
+### Waarom dit een tribute is, geen exacte decompile
+Origineel WATER (`SecondReality_source/WATER/`) is **pre-rendered POV-Ray** (1.x/2.x) + Pascal playback. De `.POV` scripts (AA, KK, FISH13) renderden vooraf alle scene-frames als bitmaps; Pascal deed dan water-bump op die plaatjes. Een runtime-procedureel original bestaat niet — daarom een fragment-shader hommage in de geest van het effect.
+
+### Toegevoegd
+- **`decomp/water/ASM_NOTES.md`**: source-stack-overzicht (Pascal + POV-Ray + LBM + asm routines), POV-Ray-snippet uit `AA.POV`, expliciete "tribute"-rationale, mapping naar moderne fragment-shader
+- **`decomp/water/port.vert/frag`** + **`port.ts`** stub
+- **`src/scenes/water.ts`**: fullscreen-quad fragment-shader met fbm-noise, caustic-light (`pow(sin(...), 4.0)`), onderwater-blauw mix, sin-glint specula, vignet
+- `src/main.ts`: timeline = ... TUNNELI → **WATER (10s)** → ALKU
+
+### Verifieerd
+- `npx tsc --noEmit` schoon
+- `npm run build`: 19 modules, **20.59 KB JS / 7.26 KB gzip**
+- **Visuele verificatie pending**: bewegende onderwater-blauwe scene met heldere caustic-lichtbundels en spiculae
+
 ## [0.5.0-PurpleMotion] — 2026-06-07
 
 Vierde scene: **TUNNELI** (pipe-snake). Begin van fase 5 scene-uitbreiding.

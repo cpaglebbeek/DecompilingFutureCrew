@@ -52,7 +52,7 @@ Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 ## Fase 5 — Volume-uitbreiding (v0.5.x-PurpleMotion) ✓ huidige (v0.5.0)
 
 - [x] **TUNNELI** (v0.5.0) — niet een tunnel-fly-through maar een 3D pipe-snake; 80 ringen × 64 punten via vertex-shader Lissajous-path
-- [ ] **WATER** (v0.5.1) — origineel = pre-rendered POV-Ray, dus tribute via fragment-shader water (raymarched of fbm-distorted)
+- [x] **WATER** (v0.5.1) — tribute via fragment-shader (fbm + caustic + onderwater-blauw); origineel was pre-rendered POV-Ray + Pascal
 - [ ] **LENS** (v0.5.2) — lens-zoom / fisheye distortie als post-effect
 - [ ] **TWIST** (v0.5.3) — twist-warp transformatie
 - [ ] **GRID** (v0.5.4) — grid-warp

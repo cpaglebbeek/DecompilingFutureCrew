@@ -35,7 +35,7 @@ decomp/<scene>/
 | LENS | LENS | tbd | — |
 | GRID | GRID | tbd | — |
 | TWIST | TWIST | tbd | — |
-| WATER | WATER | tbd | — |
+| WATER | WATER | **tribute v0.5.1-PurpleMotion** (origineel = POV-Ray) ✓ | `water/` ASM_NOTES + port.vert/frag |
 | TUNNELI | TUNNELI | **ge-port v0.5.0-PurpleMotion** (pipe-snake, niet fly-through) ✓ | `tunneli/` ASM_NOTES + port.ts/vert/frag |
 | TECHNO | TECHNO | tbd | — |
 | DDSTARS | DDSTARS | tbd | — |
