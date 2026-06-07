@@ -2,7 +2,7 @@
 
 Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 
-## Fase 0 — Skeleton (v0.0.1-PSi) ✓ huidige
+## Fase 0 — Skeleton (v0.0.1-PSi) ✓
 
 - [x] Vite + TS + WebGL2 boot
 - [x] Timeline-stub die scenes sequentieel afspeelt
@@ -11,12 +11,14 @@ Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 - [x] GitHub Pages auto-deploy via Actions
 - [x] Decomp-doc structuur (`decomp/<scene>/ASM_NOTES.md` + `port.*`)
 
-## Fase 1 — Renderer fundamenten (v0.1.x-Marvel)
+## Fase 1 — Renderer fundamenten (v0.1.0-Marvel) ✓ huidige
 
-- [ ] WebGL2 wrapper (program/shader caching, vao helpers, framebuffer ping-pong)
-- [ ] DPR-aware canvas resize, fullscreen, pause/resume
-- [ ] FPS-overlay (toggle)
-- [ ] Keyboard + touch input (tap = skip, hold = pause, double-tap = back)
+- [x] WebGL2 wrapper (program/shader caching, fullscreen-triangle VAO, Framebuffer helper)
+- [x] DPR-aware canvas resize (al in 0.0.1) + pause/resume via Timeline
+- [x] FPS-overlay (HUD met scene-naam + paused-indicator, toggle `H`)
+- [x] Keyboard + touch input (tap=skip, long-press=pause, double-tap=back, kbd-mappings)
+- [x] STARFIELD als eerste echte fragment-shader scene (vervangt placeholder)
+- [ ] Fullscreen-API (F11 / `fullscreen` toggle) — uitgesteld naar 0.1.1 indien gewenst
 
 ## Fase 2 — Eerste hero-decompile: GLENZ (v0.2.x-Trug)
 

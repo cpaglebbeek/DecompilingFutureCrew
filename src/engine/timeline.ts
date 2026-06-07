@@ -20,9 +20,15 @@ export class Timeline {
   private entries: TimelineEntry[];
   private idx = 0;
   private elapsed = 0;
+  paused = false;
 
   constructor(entries: TimelineEntry[]) {
+    if (entries.length === 0) throw new Error("Timeline needs at least one entry");
     this.entries = entries;
+  }
+
+  get currentName(): string {
+    return this.entries[this.idx]?.name ?? "";
   }
 
   skip(): void {
@@ -30,10 +36,19 @@ export class Timeline {
     this.elapsed = 0;
   }
 
+  back(): void {
+    this.idx = (this.idx - 1 + this.entries.length) % this.entries.length;
+    this.elapsed = 0;
+  }
+
+  togglePause(): void {
+    this.paused = !this.paused;
+  }
+
   update(dt: number, renderer: Renderer, audio: AudioEngine): void {
-    this.elapsed += dt * 1000;
     const entry = this.entries[this.idx];
     if (!entry) return;
+    if (!this.paused) this.elapsed += dt * 1000;
     if (this.elapsed >= entry.durationMs) {
       this.idx = (this.idx + 1) % this.entries.length;
       this.elapsed = 0;
