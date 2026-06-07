@@ -1,8 +1,8 @@
 ---
 date: 2026-06-07
 repo: DecompilingFutureCrew
-status: open
-resume: "verder met DecompilingFutureCrew — fase 1 v0.1.x-Marvel renderer-fundamenten (program/shader caching, framebuffer ping-pong, FPS-overlay, touch-controls); daarna fase 2 GLENZ decompile"
+status: done
+resume: ""
 ---
 
 # 000 — WhatIf v0.0.1-PSi
