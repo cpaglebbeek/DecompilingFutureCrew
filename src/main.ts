@@ -5,6 +5,7 @@ import { Input } from "./engine/input.js";
 import { Hud } from "./engine/hud.js";
 import { starfieldScene } from "./scenes/starfield.js";
 import { glenzScene } from "./scenes/glenz.js";
+import { dotsScene } from "./scenes/dots.js";
 import { alkuScene } from "./scenes/alku.js";
 
 const canvas = document.getElementById("stage") as HTMLCanvasElement;
@@ -14,9 +15,10 @@ const input = new Input(canvas);
 const hud = new Hud();
 
 const timeline = new Timeline([
-  { name: "STARFIELD", durationMs: 8000, scene: starfieldScene },
+  { name: "STARFIELD", durationMs: 8000,  scene: starfieldScene },
   { name: "GLENZ",     durationMs: 10000, scene: glenzScene },
-  { name: "ALKU",      durationMs: 3000, scene: alkuScene },
+  { name: "DOTS",      durationMs: 12000, scene: dotsScene },
+  { name: "ALKU",      durationMs: 3000,  scene: alkuScene },
 ]);
 
 input.onActivate = () => audio.resume();

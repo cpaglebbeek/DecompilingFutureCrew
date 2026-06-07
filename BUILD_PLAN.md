@@ -29,11 +29,13 @@ Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 - [x] Scene `src/scenes/glenz.ts` geregistreerd in timeline (10s tussen STARFIELD en ALKU)
 - [ ] *(Uit scope, voor 0.2.x)*: wireframe-edges, hidden-edge tracking, palet-OR pixel-perfect
 
-## Fase 3 — Tweede hero-decompile: DOTS / PLASMA (v0.3.x-Pixel)
+## Fase 3 — Tweede hero-decompile: DOTS (v0.3.0-Pixel) ✓ huidige
 
-- [ ] Identificeer DOTS-routine in source (dots-tunnel / dots-vortex)
-- [ ] Port naar instanced rendering (1 draw call, ~64k dots)
-- [ ] Decomp-note
+- [x] Identificeer DOTS-routine in source (**niet tunnel/vortex** zoals gespeculeerd — 512 particles met physics in 4 fases)
+- [x] Port naar instanced rendering (1 draw-call, 512 dots — niet 64k zoals gespeculeerd; origineel doet 512)
+- [x] Decomp-note `decomp/dots/ASM_NOTES.md` met alle 4 fases beschreven (alleen 1+2 ge-port)
+- [x] Scene `src/scenes/dots.ts` in timeline (12s tussen GLENZ en ALKU)
+- [ ] *(Parkeren voor v0.3.x)*: fase 3 spiraal, fase 4 random scatter, trails, background-image
 
 ## Fase 4 — Audio (v0.4.x-Skaven)
 

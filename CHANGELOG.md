@@ -2,6 +2,34 @@
 
 Codenamen = Future Crew leden.
 
+## [0.3.0-Pixel] — 2026-06-07
+
+Tweede hero-decompile: **DOTS** (fase 1+2 — Lissajous + cirkel-met-gravity).
+
+### Toegevoegd
+- **`decomp/dots/ASM_NOTES.md`**: source-vondst in `MAIN.C`, alle 4 fases beschreven met formules, teal-cyan palet-init uitgelegd, `depthtable1-4[]` LUT mapping naar fragment-shader
+- **`decomp/dots/port.ts`**: `DotState` (x,y,z,yadd), `initDots()` (512 dots), `emitLissajous()` + `emitCircleWithGravity()` emitters, `stepDots()` physics, `syncPositionBuffer()` voor instance-buffer
+- **`decomp/dots/port.vert`** + **`port.frag`**: instanced point-sprite shader met perspective-correcte `gl_PointSize` en depth-shading
+- **`src/scenes/dots.ts`**: VAO met instance-attribuut `a_dotPos` (DYNAMIC) + `a_colorBucket` (STATIC), 1 `drawArraysInstanced(POINTS, 0, 1, 512)` call per frame, langzame y-rotatie voor parallax
+- Teal-cyan kleur-palet uit `cols[]` in `MAIN.C:72-76` letterlijk overgenomen (4 buckets: zwart/donker-teal/medium-teal/helder-teal)
+
+### Gewijzigd
+- `src/main.ts`: timeline = STARFIELD (8s) → GLENZ (10s) → **DOTS (12s)** → ALKU (3s)
+- `index.html`: HUD-versie-string v0.3.0-Pixel
+
+### Verifieerd
+- `npx tsc --noEmit` schoon
+- `npm run build`: 15 modules, **14.55 KB JS / 5.46 KB gzip** (cold-start budget 150 KB ruim onder)
+- `npm run dev`: `src/scenes/dots.ts`, `decomp/dots/port.ts`, `src/main.ts` allen 200
+- **Visuele verificatie pending**: 512 teal-cyan dots in Lissajous 3D-figuur (5s) → cirkel-formatie met opwaartse impuls en gravity-val (7s)
+
+### Niet (parkeren voor v0.3.x)
+- Fase 3 (spiraal, frame 900-1700)
+- Fase 4 (random scatter, frame 1700-2360)
+- Trails (per dot 4 vorige posities, vereist 4 extra instance-attribs + 4 extra draws)
+- Palet-fade tussenscenes (overgang via timeline-fade is genoeg)
+- Background-image compositing
+
 ## [0.2.0-Trug] — 2026-06-07
 
 Eerste echte decompile-port: **GLENZ**.
