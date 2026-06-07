@@ -49,13 +49,13 @@ Roadmap per fase. Elke fase eindigt met committen + GitHub Pages deploy.
 - [ ] *(v0.4.x)* Volume-slider in HUD
 - [ ] *(v0.4.x)* MUSIC1.S3M switcher
 
-## Fase 5 — Volume-uitbreiding (v0.5.x-Purple Motion)
+## Fase 5 — Volume-uitbreiding (v0.5.x-PurpleMotion) ✓ huidige (v0.5.0)
 
-- [ ] TUNNELI (tunnel effect)
-- [ ] LENS (lens-zoom / fisheye)
-- [ ] WATER (water-bump)
-- [ ] TWIST (twist transformatie)
-- [ ] GRID (grid-warp)
+- [x] **TUNNELI** (v0.5.0) — niet een tunnel-fly-through maar een 3D pipe-snake; 80 ringen × 64 punten via vertex-shader Lissajous-path
+- [ ] **WATER** (v0.5.1) — origineel = pre-rendered POV-Ray, dus tribute via fragment-shader water (raymarched of fbm-distorted)
+- [ ] **LENS** (v0.5.2) — lens-zoom / fisheye distortie als post-effect
+- [ ] **TWIST** (v0.5.3) — twist-warp transformatie
+- [ ] **GRID** (v0.5.4) — grid-warp
 
 ## Fase 6 — End-game scenes (v0.6.x-Yodel / v0.7.x-Yost)
 

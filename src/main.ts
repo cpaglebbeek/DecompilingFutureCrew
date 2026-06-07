@@ -6,6 +6,7 @@ import { Hud } from "./engine/hud.js";
 import { starfieldScene } from "./scenes/starfield.js";
 import { glenzScene } from "./scenes/glenz.js";
 import { dotsScene } from "./scenes/dots.js";
+import { tunneliScene } from "./scenes/tunneli.js";
 import { alkuScene } from "./scenes/alku.js";
 
 const canvas = document.getElementById("stage") as HTMLCanvasElement;
@@ -18,6 +19,7 @@ const timeline = new Timeline([
   { name: "STARFIELD", durationMs: 8000,  scene: starfieldScene },
   { name: "GLENZ",     durationMs: 10000, scene: glenzScene },
   { name: "DOTS",      durationMs: 12000, scene: dotsScene },
+  { name: "TUNNELI",   durationMs: 12000, scene: tunneliScene },
   { name: "ALKU",      durationMs: 3000,  scene: alkuScene },
 ]);
 

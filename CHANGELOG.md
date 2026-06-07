@@ -2,6 +2,35 @@
 
 Codenamen = Future Crew leden.
 
+## [0.5.0-PurpleMotion] — 2026-06-07
+
+Vierde scene: **TUNNELI** (pipe-snake). Begin van fase 5 scene-uitbreiding.
+
+### Correctie op BUILD_PLAN.md
+TUNNELI is **niet** een first-person tunnel-fly-through. Source-vondst in `TUNNELI/TUN10.PAS` toont een **3D pipe-snake** ("putki" = Fins voor pipe): 103 ringen langs een Lissajous-pad, elk met 64 punten, in Turbo Pascal + inline x86 asm (heel ander stack dan de C/asm van GLENZ/DOTS). Onze port reproduceert het pipe-snake-idee, niet de first-person-tunnel.
+
+### Toegevoegd
+- **`decomp/tunneli/ASM_NOTES.md`**: source-vondst, datastructuren (`putki`, `pcalc`, `sade`), palette-init (grayscale + neon-groene leading edge), render-pipeline van inline asm, mapping-tabel
+- **`decomp/tunneli/port.ts`**: `buildTunneliVertices()` — 80 ringen × 64 punten = 5120 vertices (single VBO), elke vertex bevat alleen `(ringIdx, pointIdx)`
+- **`decomp/tunneli/port.vert/frag`**: vertex-shader berekent path-positie (Lissajous-center + sin-modulated radius), fragment-shader doet grayscale + groene leading-edge fade
+- **`src/scenes/tunneli.ts`**: single draw-call `gl.POINTS` van 5120 vertices, additive blending, depth-test off
+
+### Gewijzigd
+- `src/main.ts`: timeline = STARFIELD → GLENZ → DOTS → **TUNNELI (12s)** → ALKU
+- `index.html`: HUD-versie-string v0.5.0-PurpleMotion
+
+### Verifieerd
+- `npx tsc --noEmit` schoon
+- `npm run build`: 18 modules, **18.76 KB JS / 6.78 KB gzip** (cold-start budget 150 KB)
+- `npm run dev`: `src/scenes/tunneli.ts` + `decomp/tunneli/port.ts` 200
+- **Visuele verificatie pending**: golvende grayscale pipe met groene "kop" die door 3D-ruimte beweegt
+
+### Volgende — fase 5 vervolg
+- v0.5.1: WATER (tribute, want origineel = pre-rendered POV-Ray)
+- v0.5.2: LENS (lens-zoom / fisheye)
+- v0.5.3: TWIST (twist-warp)
+- v0.5.4: GRID (grid-warp)
+
 ## [0.4.0-Skaven] — 2026-06-07
 
 Fase 4 — **audio is live**. De originele Second Reality soundtrack speelt nu in de browser.
