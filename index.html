@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <title>Decompiling Future Crew — Second Reality (browser-port)</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        color: #ddd;
+        font-family: system-ui, sans-serif;
+        overflow: hidden;
+      }
+      #stage {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        display: block;
+        touch-action: none;
+      }
+      #hud {
+        position: fixed;
+        left: 12px;
+        bottom: 12px;
+        font-size: 11px;
+        opacity: 0.55;
+        pointer-events: none;
+        user-select: none;
+        text-shadow: 0 1px 2px #000;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="stage"></canvas>
+    <div id="hud">DecompilingFutureCrew · v0.0.1-PSi</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
