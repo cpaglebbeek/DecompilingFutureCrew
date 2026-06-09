@@ -2,6 +2,57 @@
 
 Codenamen = Future Crew leden.
 
+## [0.6.1-Yodel] — 2026-06-09
+
+**Deep-debug GLENZ** — vier defecten t.o.v. het origineel (YouTube-referentie 1:46–2:33) verholpen. **Gele bugfix** (out-of-physical-box): de display-mapping-laag met fudge-constanten (`POS_DIV`/`CAM_BASE`/`OBJ_SCALE`/`SCALE_REF`/`Y_OFFSET`/`FX`/`FY`/`Z_MIN`) is vervangen door **faithful world-units + de echte projectie-constanten** — een logische-architectuur-correctie, geen fysiek lapje.
+
+### Root Cause Analysis
+- **Functioneel:** kleuren waren een RGB/CMY-regenboog; het schaakbord (glenz-transparantie) ontbrak; geluid liep vóór op de muziek; het 2e object dreef weg i.p.v. concentrisch genest te blijven.
+- **Technisch:** (1) `GROUP_COLOR` regenboog i.p.v. de violette `backpal` + `test bp,2`-tintsplitsing uit `VEC.ASM demo_glz`; (2) additieve smooth-fill zonder de canonieke 50%-stipple; (3) visuele klok-epoch gezet bij `AudioContext`-creatie (vóór WASM-init + S3M-load) → visuals racen vooruit; (4) beide objecten genormaliseerd op kubus=1.0 + losse fudge-schalingen → echte grootteverhouding verbroken → drift.
+- **Architectonisch:** de reconstructie projecteerde in een verzonnen view-ruimte i.p.v. de bron-coördinatenruimte; daardoor moest elke plaatsing met de hand bijgesteld worden en klopte de objectrelatie nooit structureel.
+
+### Gewijzigd
+- **`glenz_data.ts`**: `OBJECT_A = buildVerts(5000, 8500)`, `OBJECT_B = buildVerts(5940, 10395)` (echte world-units uit `MAIN.C` ZZZ=50/QQQ=99); per-`Tri` `code` (epolys `0x4002+2*i`, epolysb `0x4004/0x4002` tegenfase); `GROUP_COLOR`-regenboog vervangen door `GLENZ_TINT_BLUE`/`GLENZ_TINT_WHITE` + `tintForCode(code&2)` (violet glas vs witte highlight, conform `backpal`/`demo_glz`)
+- **`glenz_renderer.ts`**: faithful projectie `sx = X*256/Z + 160`, `sy = Y*213/Z + 130`, Z-clamp 128 (constanten i.p.v. `FX`/`FY`/`Z_MIN`); tint per `code&2`; **50% screen-aligned schaakbord-stipple** `((x+parity)&1)` met helderheids-boost ×1.8
+- **`glenz_core.ts`**: faithful transforms — `scale*64/32768` (`VEC.ASM rotlist`), translatie naar world `(oxp, ypos+1500+oyp, ozp)` met `camDist = 7500`; alle fudge-constanten verwijderd
+- **`audio_sync.ts`**: visuele klok-epoch + `clockStarted` pas gezet in `onInitialized` (bij `load()`), niet bij `ctx`-creatie; `currentTime()` geeft 0 tot de module geladen is → visuals wachten op frame 0 tot de muziek echt klinkt (faithful aan `while(dis_musplus()<-19); dis_setmframe(0)`)
+
+### Verifieerd
+- `tsc -b` schoon; geen overgebleven verwijzingen naar verwijderde fudge-constanten
+- **Headless Playwright (echte browser)**: 0 page-errors; geen 404 op assets (S3M + chiptune3 + libopenmpt 200); `mframe` loopt pas op ná worklet-init (audio-gate bewezen)
+- **Visueel bevestigd** via screenshots: violet/wit glas met zichtbaar schaakbord (mframe 352/636); beide objecten concentrisch genest zonder drift, B omsluit A (mframe 1019)
+- **Te bevestigen tegen video:** de schaakbord-interpretatie (canonieke glenz-transparantie-stipple) — headless niet met zekerheid te toetsen
+
+## [0.6.0-Yodel] — 2026-06-09
+
+Nieuw **standalone GLENZ-subsysteem** (`glenz/`): een browser-native *semantische* reconstructie van GLENZ.EXE — de translucente roterende glenz-vector die van bovenaf invalt en bij inslag squasht, op de echte `MUSIC0.S3M` (Skaven). Oranje bump (+0.1.0 — nieuw subsysteem met design-impact; bestaande WebGL-demo blijft ongemoeid).
+
+### Waarom een apart subsysteem, geen scene in de WebGL-timeline
+De gevraagde aanpak (YAML-spec: Canvas-2D software-rasteriser + indexed 320×200 framebuffer + DIS-shim + audio-locked clock) is een **semantische port van `MAIN.C`/`VEC.ASM`**, een andere stack dan de WebGL2-scenes. Daarom als losse Vite multi-page app onder `glenz/`, met eigen entry, naast de bestaande demo.
+
+### Toegevoegd
+- **`glenz/src/glenz_data.ts`**: object-verts/tris (kubus + 6 as-tip-piramides = spiked glenz, 24 tris in 6 kleurgroepen), `sin1024`-tabel (amplitude 256), projectie-constanten (213/256 VGA-aspect), R/G/B/Y/C/M groepskleuren, OBJECT_A/B
+- **`glenz/src/vga.ts`**: mode-13h-model — indexed `Uint8Array(320×200)` + 6-bit palette + additieve RGBA-presentatie, nearest-neighbour pixelated blit
+- **`glenz/src/glenz_renderer.ts`**: software-rasteriser — rotate/scale (R=Ry·Rx·Rz) + perspectief-projectie + additieve scanline triangle-fill, geen back-face cull (beide glaszijden tonen), facing-shading `|n·view|`
+- **`glenz/src/dis_shim.ts`**: DIS-stand-in — music-frame uit de audio-clock, non-blocking `waitb`, copper-callback-slot
+- **`glenz/src/audio_sync.ts`**: chiptune3 + libopenmpt playback; `AudioContext.currentTime` als master-clock (visuals audio-locked, nooit desync)
+- **`glenz/src/glenz_core.ts`**: sim-port van `MAIN.C:273-648` — rotatie (rx+=32/ry+=7), drop/bounce/jello-fysica (ypos −9000 → bounce → settle −2800), scale-puls, tweede pointier glenz fade-in vanaf frame 800, secundaire beweging via `sin1024`, naadloze sequence-loop
+- **`glenz/src/main.ts`**: wiring + rAF-loop + input (start/pause/restart/mute/HUD) + DPR-aware pixelated canvas
+- **`glenz/index.html`** + **`glenz/README.md`** (run-instructies + lijst van geapproximeerde routines)
+
+### Gewijzigd
+- `vite.config.ts`: rollup multi-page input (`main` + `glenz`)
+- `tsconfig.json`: include `glenz/src`
+
+### Verifieerd
+- `tsc -b` schoon; `npm run build` groen (28 modules, `glenz` chunk 9.61 KB / 4.13 KB gzip)
+- **Headless Playwright smoke-test (echte browser)**: 0 console/page-errors; HUD telt `mframe` op exact 70 Hz uit de audio-clock (audio-locked bewezen); ~31% niet-zwarte pixels met `maxLum 765` (verzadigde additieve overlap = glenz-translucentie werkt); 60 fps
+- **Visueel bevestigd** via screenshots: drop-in van bovenaf (mframe 125) + gecentreerde gesettelde spiked glenz (mframe 768) met doorkijk door beide glasschillen, alle 6 as-piramides zichtbaar
+- `Y_OFFSET` live-getuned (1500→2300) zodat gesettelde object centreert
+
+### Buiten scope (fase 2)
+FC-logo intro (`zoomer`/`zoomer2`), DOS palette-fades, music-cue-sync — achtergrond blijft zwart.
+
 ## [0.5.1-PurpleMotion] — 2026-06-07
 
 Vijfde scene: **WATER** (tribute via fragment-shader). Patch-level bump (Groen — alleen toevoegen, geen design-impact).
