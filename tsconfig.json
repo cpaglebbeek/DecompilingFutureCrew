@@ -19,5 +19,5 @@
     "jsx": "preserve",
     "outDir": "dist"
   },
-  "include": ["src", "decomp"]
+  "include": ["src", "decomp", "glenz/src"]
 }

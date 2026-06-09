@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-hc55
 .DS_Store
 *.log
 .vite
@@ -7,3 +8,5 @@ dist
 .env
 .env.*
 !.env.example
+_glenz_shot.mjs
+_glenz_audio.mjs

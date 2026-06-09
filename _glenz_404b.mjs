@@ -1,0 +1,12 @@
+import { chromium } from "playwright-core";
+const EXEC = "/Users/christian/Library/Caches/ms-playwright/chromium-1223/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing";
+const url = "http://localhost:5173/DecompilingFutureCrew/glenz/index.html";
+const browser = await chromium.launch({ executablePath: EXEC, headless: true, args: ["--autoplay-policy=no-user-gesture-required"] });
+const page = await browser.newPage();
+const nf = [];
+page.on("response", r => { if (r.status()===404) nf.push(r.url()); });
+await page.goto(url, { waitUntil: "domcontentloaded" });
+await page.evaluate(() => (window).__audio.start());
+await page.evaluate(()=>new Promise(r=>setTimeout(r,13000)));
+console.log("404 URLs over 13s:", JSON.stringify(nf.map(u=>u.replace("http://localhost:5173","")), null, 2));
+await browser.close();

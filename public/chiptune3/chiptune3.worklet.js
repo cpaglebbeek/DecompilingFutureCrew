@@ -171,8 +171,20 @@ class MPT extends AudioWorkletProcessor {
 	} // handleMessage_
 
 	decodeAll(buffer) {
+		// Accept either a raw ArrayBuffer (decode default subsong) or
+		// { buf, subsong } to decode one specific subsong offline. Decoding is a
+		// synchronous tight read-loop here, so it is immune to the real-time
+		// streaming path's render-quantum stutter — the resulting PCM is the
+		// clean, deterministic ground truth the runtime plays via an AudioBuffer.
+		let subsong = null
+		if (buffer && buffer.buf) { subsong = buffer.subsong; buffer = buffer.buf }
 		this.play(buffer, true)
-		
+		// force play-once so the read loop terminates regardless of config.repeatCount
+		libopenmpt._openmpt_module_set_repeat_count(this.modulePtr, 0)
+		if (subsong !== null && subsong !== undefined) {
+			libopenmpt._openmpt_module_select_subsong(this.modulePtr, subsong)
+		}
+
 		// now build the full audioData
 		const left = [], right = []
 		const maxFramesPerChunk = 128
@@ -209,15 +221,10 @@ class MPT extends AudioWorkletProcessor {
 			return
 		}
 
-		if (libopenmpt.stackSave) {
-			const stack = libopenmpt.stackSave()
-			libopenmpt._openmpt_module_ctl_set(this.modulePtr, asciiToStack('render.resampler.emulate_amiga'), asciiToStack('1'))
-			libopenmpt._openmpt_module_ctl_set(this.modulePtr, asciiToStack('render.resampler.emulate_amiga_type'), asciiToStack('a1200'))
-			//libopenmpt._openmpt_module_ctl_set('play.pitch_factor', e.target.value.toString());
+		// NB: MUSIC0.S3M is a PC ScreamTracker 3 module, not an Amiga MOD — do
+		// NOT force Amiga resampler emulation (the upstream lib did this
+		// unconditionally, which colours/filters the S3M wrongly).
 
-			libopenmpt.stackRestore(stack)
-		}
-		
 		this.paused = paused
 		this.leftPtr = libopenmpt._malloc(4 * maxFramesPerChunk)	// 4x = float
 		this.rightPtr = libopenmpt._malloc(4 * maxFramesPerChunk)
