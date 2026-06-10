@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>GLENZ — muziek-debug (A / A2 / REF)</title>
+    <style>
+      :root { color-scheme: dark; }
+      body {
+        margin: 0;
+        padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
+        background: #000;
+        color: #ddd;
+        font-family: system-ui, sans-serif;
+        line-height: 1.5;
+        max-width: 60ch;
+      }
+      h1 { color: #6cf; letter-spacing: 0.1em; font-size: 1.4rem; }
+      h2 { color: #6cf; font-size: 1rem; margin: 0 0 0.3rem; }
+      a { color: #6cf; }
+      .card {
+        border: 1px solid #234;
+        border-radius: 6px;
+        padding: 0.9rem 1rem;
+        margin: 1rem 0;
+        background: #0a0e12;
+      }
+      .meta { font-size: 0.78rem; opacity: 0.6; margin: 0.2rem 0 0.6rem; }
+      audio { width: 100%; }
+      .miss { color: #f86; font-size: 0.8rem; }
+      .hint { font-size: 0.82rem; opacity: 0.8; }
+      label { display: inline-flex; gap: 0.35rem; align-items: center; font-size: 0.8rem; opacity: 0.85; }
+      code { background: #1a1f25; padding: 0 0.3em; border-radius: 3px; }
+    </style>
+  </head>
+  <body>
+    <h1>GLENZ · muziek-debug</h1>
+    <p class="hint">
+      Geïsoleerd afspelen van alleen de GLENZ-muziek (MUSIC1.S3M, orders 50–60),
+      los van de demo-visuals. Doel: vaststellen of "vertraagd / hakkerig" in het
+      <em>bestand</em> zit of in het <em>afspeelpad</em>. Vergelijk A en A2 (loop
+      aan → luister naar de naad) en beide tegen REF (het origineel).
+      Terug: <a href="./index.html">← GLENZ (demo/viewer)</a> ·
+      <a href="../">← hoofddemo</a>.
+    </p>
+
+    <div class="card">
+      <h2>A — productie-loop (Opus-in-Ogg)</h2>
+      <p class="meta">
+        <code>audio/glenz_loop.ogg</code> — wat de demo daadwerkelijk afspeelt
+        (<code>AudioBufferSource(loop=true)</code>). Opus-encoder pre-skip kan een
+        klik/gat op de loop-naad geven → daarom loop hieronder aan.
+      </p>
+      <audio id="a" controls loop preload="metadata"></audio>
+      <p id="a-miss" class="miss" hidden>bestand niet gevonden</p>
+    </div>
+
+    <div class="card">
+      <h2>A2 — lossless render (WAV)</h2>
+      <p class="meta">
+        <code>audio/glenz_loop_lossless.wav</code> — dezelfde render zonder
+        Opus-compressie. Klinkt A2 vloeiend en A "hakkerig", dan zit het
+        artefact in de Opus-naad. Klinken beide "vertraagd", dan zit het in de
+        render zelf (cold-seek tempoverlies).
+      </p>
+      <audio id="a2" controls loop preload="metadata"></audio>
+      <p id="a2-miss" class="miss" hidden>bestand niet gevonden (debug-asset)</p>
+    </div>
+
+    <div class="card">
+      <h2>REF — referentie-capture</h2>
+      <p class="meta">
+        <code>audio/ref_glenz.ogg</code> — opname van het origineel als meetlat.
+        Geen loop: hoor het bedoelde tempo + timbre.
+      </p>
+      <audio id="ref" controls preload="metadata"></audio>
+      <p id="ref-miss" class="miss" hidden>bestand niet gevonden (debug-asset)</p>
+    </div>
+
+    <p class="hint">
+      Verdict-vragen: (1) is A hoorbaar hakkerig op de naad en A2 niet? (2) lopen
+      A én A2 trager dan REF? Jouw antwoord bepaalt de fix-route
+      (loop-trim vs. tempo-warmup render).
+    </p>
+
+    <script type="module">
+      // Resolve each source against this page's directory so it works on the
+      // GitHub Pages base (/DecompilingFutureCrew/glenz/) and via file:// alike.
+      const srcs = {
+        a: "../audio/glenz_loop.ogg",
+        a2: "../audio/glenz_loop_lossless.wav",
+        ref: "../audio/ref_glenz.ogg",
+      };
+      for (const [id, rel] of Object.entries(srcs)) {
+        const el = document.getElementById(id);
+        const miss = document.getElementById(`${id}-miss`);
+        const url = new URL(rel, location.href).href;
+        try {
+          const head = await fetch(url, { method: "HEAD" });
+          if (head.ok) el.src = url;
+          else miss.hidden = false;
+        } catch {
+          // HEAD may be blocked under file://; fall back to setting src directly
+          el.src = url;
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -165,14 +165,29 @@ class MPT extends AudioWorkletProcessor {
 			case 'decodeAll':
 				this.decodeAll(v)
 				break
+			case 'decodeLinear':
+				this.decodeLinear(v)
+				break
 			default:
 				console.log('Received unknown message',msg.data)
 		}
 	} // handleMessage_
 
 	decodeAll(buffer) {
+		// Accept either a raw ArrayBuffer (decode default subsong) or
+		// { buf, subsong } to decode one specific subsong offline. Decoding is a
+		// synchronous tight read-loop here, so it is immune to the real-time
+		// streaming path's render-quantum stutter — the resulting PCM is the
+		// clean, deterministic ground truth the runtime plays via an AudioBuffer.
+		let subsong = null
+		if (buffer && buffer.buf) { subsong = buffer.subsong; buffer = buffer.buf }
 		this.play(buffer, true)
-		
+		// force play-once so the read loop terminates regardless of config.repeatCount
+		libopenmpt._openmpt_module_set_repeat_count(this.modulePtr, 0)
+		if (subsong !== null && subsong !== undefined) {
+			libopenmpt._openmpt_module_select_subsong(this.modulePtr, subsong)
+		}
+
 		// now build the full audioData
 		const left = [], right = []
 		const maxFramesPerChunk = 128
@@ -194,9 +209,72 @@ class MPT extends AudioWorkletProcessor {
 		this.stop()
 	}
 
+	// Offline render of a single +++-delimited order range, used to BAKE the
+	// static part-music loops (e.g. GLENZ = orders 50-60). Two modes:
+	//
+	//   warmup=false (cold): set_position_order_row(from,0) then read until the
+	//     order passes `to`. Fast, but a cold seek does NOT replay the tempo/speed
+	//     (Txx/Axx) effects that ran in orders before `from`, so the section can
+	//     render at the module's INITIAL tempo instead of its tempo at `from` —
+	//     audibly "too slow" for sections the song sped up into.
+	//
+	//   warmup=true (tempo-correct): play continuously from order 0 so all tempo/
+	//     speed/effect state accumulates exactly as the song intends, but only
+	//     EMIT samples while current_order is within [from,to]. Discards the warm-
+	//     up audio. This is the faithful render of how the part actually sounds in
+	//     the running demo.
+	//
+	// buffer = { buf, from, to, warmup }. Synchronous tight loop → deterministic.
+	decodeLinear(buffer) {
+		let from = 0, to = 1e9, warmup = false
+		if (buffer && buffer.buf) {
+			from = buffer.from ?? 0
+			to = buffer.to ?? 1e9
+			warmup = !!buffer.warmup
+			buffer = buffer.buf
+		}
+		this.play(buffer, true)
+		libopenmpt._openmpt_module_set_repeat_count(this.modulePtr, 0)
+
+		const left = [], right = []
+		const maxFramesPerChunk = 128
+
+		if (warmup) {
+			libopenmpt._openmpt_module_set_position_order_row(this.modulePtr, 0, 0)
+			let emitting = false
+			let safety = 0
+			while (safety++ < 5000000) {
+				const got = libopenmpt._openmpt_module_read_float_stereo(this.modulePtr, sampleRate, maxFramesPerChunk, this.leftPtr, this.rightPtr)
+				if (got === 0) break // 0xFF end-marker reached
+				const ord = libopenmpt._openmpt_module_get_current_order(this.modulePtr)
+				if (ord >= from && ord <= to) {
+					emitting = true
+					left.push( ...libopenmpt.HEAPF32.subarray(this.leftPtr / 4, this.leftPtr / 4 + got) )
+					right.push( ...libopenmpt.HEAPF32.subarray(this.rightPtr / 4, this.rightPtr / 4 + got) )
+				} else if (emitting && ord > to) {
+					break // passed the section, stop
+				}
+			}
+		} else {
+			libopenmpt._openmpt_module_set_position_order_row(this.modulePtr, from, 0)
+			let safety = 0
+			while (safety++ < 5000000) {
+				const got = libopenmpt._openmpt_module_read_float_stereo(this.modulePtr, sampleRate, maxFramesPerChunk, this.leftPtr, this.rightPtr)
+				if (got === 0) break
+				const ord = libopenmpt._openmpt_module_get_current_order(this.modulePtr)
+				if (ord > to) break
+				left.push( ...libopenmpt.HEAPF32.subarray(this.leftPtr / 4, this.leftPtr / 4 + got) )
+				right.push( ...libopenmpt.HEAPF32.subarray(this.rightPtr / 4, this.rightPtr / 4 + got) )
+			}
+		}
+
+		this.port.postMessage({ cmd: 'fullAudioData', meta: this.getMeta(), data: [left, right] })
+		this.stop()
+	}
+
 	play(buffer, paused = false) {
 		this.stop()
-		
+
 		const maxFramesPerChunk = 128	// thats what worklet is using
 		const byteArray = new Int8Array(buffer)
 		const ptrToFile = libopenmpt._malloc(byteArray.byteLength)
@@ -209,15 +287,10 @@ class MPT extends AudioWorkletProcessor {
 			return
 		}
 
-		if (libopenmpt.stackSave) {
-			const stack = libopenmpt.stackSave()
-			libopenmpt._openmpt_module_ctl_set(this.modulePtr, asciiToStack('render.resampler.emulate_amiga'), asciiToStack('1'))
-			libopenmpt._openmpt_module_ctl_set(this.modulePtr, asciiToStack('render.resampler.emulate_amiga_type'), asciiToStack('a1200'))
-			//libopenmpt._openmpt_module_ctl_set('play.pitch_factor', e.target.value.toString());
+		// NB: MUSIC0.S3M is a PC ScreamTracker 3 module, not an Amiga MOD — do
+		// NOT force Amiga resampler emulation (the upstream lib did this
+		// unconditionally, which colours/filters the S3M wrongly).
 
-			libopenmpt.stackRestore(stack)
-		}
-		
 		this.paused = paused
 		this.leftPtr = libopenmpt._malloc(4 * maxFramesPerChunk)	// 4x = float
 		this.rightPtr = libopenmpt._malloc(4 * maxFramesPerChunk)

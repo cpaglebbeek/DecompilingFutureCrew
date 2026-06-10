@@ -129,4 +129,5 @@ export class ChiptuneJsPlayer {
 	seek(val) { this.setPos(val) }
 	getCurrentTime() { return this.currentTime }
 	decodeAll(ab) { this.postMsg('decodeAll', ab) }
+	decodeLinear(val) { this.postMsg('decodeLinear', val) }
 }

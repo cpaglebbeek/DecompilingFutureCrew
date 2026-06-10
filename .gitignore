@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-hc55
 .DS_Store
 *.log
 .vite
@@ -7,3 +8,5 @@ dist
 .env
 .env.*
 !.env.example
+# wegwerp debug-/probe-scripts (headless playwright render/audio checks)
+_glenz_*.mjs

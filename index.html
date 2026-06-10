@@ -34,11 +34,34 @@
         user-select: none;
         text-shadow: 0 1px 2px #000;
       }
+      #glenz-link {
+        position: fixed;
+        right: 12px;
+        top: 12px;
+        z-index: 10;
+        font-size: 12px;
+        color: #6cf;
+        opacity: 0.75;
+        text-decoration: none;
+        padding: 0.35em 0.7em;
+        border: 1px solid #6cf;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.4);
+        text-shadow: 0 1px 2px #000;
+      }
+      #glenz-link:hover,
+      #glenz-link:focus {
+        background: #6cf;
+        color: #000;
+        opacity: 1;
+        outline: none;
+      }
     </style>
   </head>
   <body>
     <canvas id="stage"></canvas>
-    <div id="hud">DecompilingFutureCrew · v0.5.1-PurpleMotion · tap=start audio / skip · long-press=pause · double-tap=back · H=hud · M=mute · music: Skaven + Purple Motion (1993)</div>
+    <a id="glenz-link" href="glenz/">GLENZ · viewer &amp; muziek →</a>
+    <div id="hud">DecompilingFutureCrew · v0.6.0-Yodel · tap=start audio / skip · long-press=pause · double-tap=back · H=hud · M=mute · music: Skaven + Purple Motion (1993)</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

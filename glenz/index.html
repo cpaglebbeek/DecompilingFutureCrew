@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <title>GLENZ — Second Reality (browser reconstruction)</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        color: #ddd;
+        font-family: system-ui, monospace, sans-serif;
+        overflow: hidden;
+      }
+      #screen {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        display: block;
+        image-rendering: pixelated;
+        touch-action: none;
+        background: #000;
+      }
+      #hud {
+        position: fixed;
+        left: 12px;
+        bottom: 12px;
+        font-size: 11px;
+        opacity: 0.55;
+        pointer-events: none;
+        user-select: none;
+        text-shadow: 0 1px 2px #000;
+      }
+      #overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6em;
+        background: rgba(0, 0, 0, 0.85);
+        cursor: pointer;
+        z-index: 10;
+        text-align: center;
+        padding: 1em;
+      }
+      #overlay h1 {
+        font-size: clamp(1.4rem, 6vw, 2.6rem);
+        margin: 0;
+        letter-spacing: 0.15em;
+        color: #6cf;
+      }
+      #overlay p {
+        margin: 0;
+        opacity: 0.7;
+        font-size: 0.85rem;
+        max-width: 36ch;
+        line-height: 1.5;
+      }
+      #overlay .modes {
+        display: flex;
+        gap: 0.8em;
+        margin-top: 0.4em;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #overlay .cta {
+        border: 1px solid #6cf;
+        border-radius: 4px;
+        padding: 0.6em 1.3em;
+        color: #6cf;
+        font-size: 0.95rem;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      #overlay .cta:hover,
+      #overlay .cta:focus {
+        background: #6cf;
+        color: #000;
+        outline: none;
+      }
+      #overlay .cta small {
+        display: block;
+        font-size: 0.72rem;
+        opacity: 0.8;
+        margin-top: 0.2em;
+        letter-spacing: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="screen"></canvas>
+    <div id="hud">GLENZ · click to start</div>
+    <div id="overlay">
+      <h1>GLENZ</h1>
+      <p>
+        Browser reconstruction of the translucent vector part from
+        Second&nbsp;Reality (Future&nbsp;Crew, 1993), with the original
+        MUSIC0.S3M by Skaven.
+      </p>
+      <div class="modes">
+        <button id="btn-demo" class="cta" type="button">
+          ▶ Demo
+          <small>getimede choreografie, op de muziek</small>
+        </button>
+        <button id="btn-viewer" class="cta" type="button">
+          🖱 Viewer
+          <small>zelf draaien met de muis</small>
+        </button>
+        <a id="btn-music" class="cta" href="./music.html">
+          🎵 Muziek-debug
+          <small>A / A2 / REF vergelijken</small>
+        </a>
+      </div>
+      <p style="opacity: 0.45">
+        demo: space = pause · R = restart · M = mute · H = HUD<br />
+        viewer: sleep = draaien · scroll = zoom · R = recenter · M = mute
+      </p>
+    </div>
+    <script type="module" src="/glenz/src/main.ts"></script>
+  </body>
+</html>
