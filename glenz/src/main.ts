@@ -52,7 +52,7 @@ function frame(now: number): void {
   core.render(dt, canvas.width, canvas.height, ctx!);
   if (hudVisible) {
     hud.textContent = core.isViewer
-      ? `GLENZ · VIEWER · drag = rotate · wheel = zoom · ${core.fps} fps` +
+      ? `GLENZ · VIEWER · sleep=draaien · shift=binnenbal draaien · ctrl=binnenbal verplaatsen · scroll=binnenbal grootte · ctrl+scroll=zoom · ${core.fps} fps` +
         (audio.isMuted ? " · MUTED" : "")
       : `GLENZ · mframe ${core.musicFrame} · ${core.fps} fps` +
         (paused ? " · PAUSED" : "") +
@@ -122,7 +122,8 @@ canvas.addEventListener("pointerdown", (e) => {
 });
 canvas.addEventListener("pointermove", (e) => {
   if (!dragging) return;
-  core.rotateBy(e.clientX - lastX, e.clientY - lastY);
+  const mode = e.ctrlKey ? "inner-move" : e.shiftKey ? "inner-rot" : "all";
+  core.rotateBy(e.clientX - lastX, e.clientY - lastY, mode);
   lastX = e.clientX;
   lastY = e.clientY;
 });
@@ -142,7 +143,8 @@ canvas.addEventListener(
   (e) => {
     if (!core.isViewer || !audio.isStarted) return;
     e.preventDefault();
-    core.zoomBy(e.deltaY);
+    if (e.ctrlKey) core.zoomBy(e.deltaY); // Ctrl+wheel = camera zoom
+    else core.scaleInnerBy(e.deltaY); // wheel = inner-ball scale
   },
   { passive: false },
 );
