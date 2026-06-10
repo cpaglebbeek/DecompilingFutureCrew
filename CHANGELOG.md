@@ -2,6 +2,62 @@
 
 Codenamen = Future Crew leden.
 
+## [0.8.5-Wildfire] — 2026-06-10
+
+**Bugfix (code geel — audio tempo, nu opgelost). Gebruiker: "waarom niet de ref ..ogg gebruiken?"**
+
+De in 0.8.4 geblokkeerde audio-fix is opgelost via de gebruiker-suggestie: niet opnieuw bakken uit de S3M, maar een loop knippen uit de **correct-tempo referentie-capture** `ref_glenz.ogg`.
+
+### Waarom niet REF 1-op-1
+`ref_glenz.ogg` (54s) klinkt op juist tempo, maar is geen loop: het heeft een intro/opbouw (stil stuk 6–15s, vol vanaf ~24s) en de naad springt (luid eind 0.103 vs zacht begin 0.041, R-discontinuïteit 0.089). `loop=true` zou klikken + elke cyclus het intro herhalen.
+
+### Oplossing
+Uit REF's uniforme groove een naadloze loop geknipt: start op nuldoorgang ~26s, beste splice via 100ms cross-correlatie (langste bijna-optimale loop = **25.8s**, S=26.0s→E=51.8s), + 15ms equal-power crossfade in de naad (groove varieert licht per maat). Resultaat na Opus-encode + browser-decode geverifieerd: naad |L|=0.0037 / |R|=0.0097 (onder ~0.01-drempel), begin/eind-energie gematcht (0.057 vs 0.053).
+
+### RCA
+- **Functioneel:** GLENZ-loop klonk te traag; nu correct tempo én naadloos.
+- **Technisch:** cold-seek nam default-tempo i.p.v. de geaccumuleerde tracker-state; warm-up botste op de `+++`-subsong-splitsing. REF is de enige bron op correct tempo → loop daaruit snijden i.p.v. her-renderen.
+- **Architectonisch:** het bak-recept was niet vastgelegd (alleen wegwerp-`_glenz_*.mjs`). Nu vastgelegd als reproduceerbaar `tools/bake_glenz_loop.mjs` (audio-deterministisch; alleen Ogg-stream-serial in de header varieert).
+
+### Gewijzigd
+- `public/audio/glenz_loop.ogg`: vervangen door 25.8s loop uit REF (correct tempo, naadloos).
+- `tools/bake_glenz_loop.mjs`: **nieuw** — reproduceerbaar recept (REF → matched-splice → crossfade → Opus).
+- `glenz/src/audio_sync.ts`: provenance-commentaar bijgewerkt naar de REF-loop-bake.
+
+## [0.8.4-Wildfire] — 2026-06-10
+
+Viewer-feature (groen). De geplande audio-tempo-fix is onderzocht maar **geblokkeerd** (zie onder) — er is bewust géén audio-asset gewijzigd.
+
+### Feature (code groen — binnenbal-gizmo). Gebruiker: "met &lt;shift&gt; ingedrukt wil ik de binnenste 'bal' kunnen bedienen" + "met ctrl ingedrukt moet ik een bal x/y kunnen bewegen. met muis scroll groter/kleiner."
+
+De viewer kan nu de **binnenste bal** (`buildViewerA`, schaal 120, blauw/wit) los van de buitenschil manipuleren:
+
+| Interactie | Effect |
+|---|---|
+| sleep | hele samenstel roteren *(bestaand)* |
+| **Shift + sleep** | binnenbal roteren (`vRxInner`/`vRyInner`) |
+| **Ctrl + sleep** | binnenbal x/y verplaatsen (`vTxInner`/`vTyInner`) |
+| **scroll** | binnenbal groter/kleiner (`vScaleInner`, clamp 0.3–3.0) |
+| **Ctrl + scroll** | camera-zoom hele viewer *(bestaande `zoomBy`)* |
+
+De buitenschil (`buildViewerB`) blijft op `vRx/vRy` en wordt niet door de binnenbal-controls geraakt. `R`/recenter (`resetViewer`) nult ook alle binnenbal-offsets.
+
+### Audio-onderzoek (code geel — GEBLOKKEERD, geen asset gewijzigd). Gebruiker: "geen verschil hoorbaar tussen a en a2. allebei langzaam."
+
+Diagnose A (Opus-loop) ≈ A2 (lossless WAV) **én** beide traag → artefact zit in de render, niet de Opus-naad. De voorgestelde fix was `glenz_loop.ogg` opnieuw bakken met `decodeLinear(..., warmup:true)`. **Bij implementatie bleek dit niet te werken:**
+- Warm-render `decodeLinear({from:50,to:60,warmup:true})` levert **0 samples**: door de 15 `+++ skip`-markers in de orderlist ziet libopenmpt de song als subsongs; continu spelen vanaf order 0 stopt aan het eind van subsong 0 (lang vóór order 50), dus er wordt nooit ge-emit.
+- De cold-render van exact 50–60 is bovendien maar **2.54s**, terwijl de geshipte `glenz_loop.ogg` **22.5s** is — de productie-loop is met een ánder recept (andere order-range / herhaling) gebakken dan deze call. Het bak-recept moet eerst teruggevonden worden.
+
+**RCA:**
+- **Functioneel:** de GLENZ-loop klinkt sleepend/te traag t.o.v. de referentie; nog niet opgelost.
+- **Technisch:** cold-seek `set_position_order_row(50,0)` neemt default-tempo i.p.v. de geaccumuleerde tempo-state; maar warm-up-vanaf-0 botst op de subsong-splitsing. Correcte aanpak vereist subsong-selectie + warm-up vanaf de **subsong-start** (de `+++`-grens vóór order 50), niet vanaf order 0.
+- **Architectonisch:** het bak-recept van `glenz_loop.ogg` is niet als script in de repo vastgelegd (alleen wegwerp-`_glenz_*.mjs`); daardoor is de render niet reproduceerbaar. Vastleggen vóór de re-bake = vereiste.
+
+### Gewijzigd
+- `glenz/src/glenz_core.ts`: binnenbal-state + `rotateBy(dx,dy,mode)` + `scaleInnerBy` + `zoomBy` op Ctrl+scroll; `buildViewerA` past offsets toe; `resetViewer` nult ze.
+- `glenz/src/main.ts`: pointer/wheel-handlers lezen `shiftKey`/`ctrlKey`; HUD-tekst bijgewerkt.
+- `glenz/index.html`: viewer-helptekst met de vier interacties.
+
 ## [0.8.3-Wildfire] — 2026-06-10
 
 **Bugfix (code geel — logische architectuur: ontbrekende navigatielaag).** Gebruiker: "ik zie nog geen optie voor viewer versie en music.html opent een ander deel van de demo."
