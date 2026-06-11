@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="color-scheme" content="dark" />
-    <title>GLENZ — Second Reality (browser reconstruction)</title>
+    <title>DOTS — Second Reality (browser reconstruction)</title>
     <style>
       html, body {
         margin: 0;
@@ -22,7 +22,6 @@
         width: 100vw;
         height: 100dvh;
         display: block;
-        image-rendering: pixelated;
         touch-action: none;
         background: #000;
       }
@@ -54,7 +53,7 @@
         font-size: clamp(1.4rem, 6vw, 2.6rem);
         margin: 0;
         letter-spacing: 0.15em;
-        color: #6cf;
+        color: #2ec8d8;
       }
       #overlay p {
         margin: 0;
@@ -71,10 +70,10 @@
         justify-content: center;
       }
       #overlay .cta {
-        border: 1px solid #6cf;
+        border: 1px solid #2ec8d8;
         border-radius: 4px;
         padding: 0.6em 1.3em;
-        color: #6cf;
+        color: #2ec8d8;
         font-size: 0.95rem;
         background: transparent;
         cursor: pointer;
@@ -84,7 +83,7 @@
       }
       #overlay .cta:hover,
       #overlay .cta:focus {
-        background: #6cf;
+        background: #2ec8d8;
         color: #000;
         outline: none;
       }
@@ -99,35 +98,30 @@
   </head>
   <body>
     <canvas id="screen"></canvas>
-    <div id="hud">GLENZ · click to start</div>
+    <div id="hud">DOTS · click to start</div>
     <div id="overlay">
-      <h1>GLENZ</h1>
+      <h1>DOTS</h1>
       <p>
-        Browser reconstruction of the translucent vector part from
-        Second&nbsp;Reality (Future&nbsp;Crew, 1993), with the original
-        MUSIC0.S3M by Skaven.
+        Browser-reconstructie van de particle-part uit
+        Second&nbsp;Reality (Future&nbsp;Crew, 1993): 512 dots met
+        gravity-physics door vier choreografie-fases. Geen audio in deze ronde.
       </p>
       <div class="modes">
         <button id="btn-demo" class="cta" type="button">
           ▶ Demo
-          <small>getimede choreografie, op de muziek</small>
+          <small>getimede choreografie, 4 fases</small>
         </button>
         <button id="btn-viewer" class="cta" type="button">
           🖱 Viewer
-          <small>zelf draaien met de muis</small>
+          <small>zelf draaien + fase-scrubber</small>
         </button>
-        <a id="btn-music" class="cta" href="./music.html">
-          🎵 Muziek-debug
-          <small>A / A2 / REF vergelijken</small>
-        </a>
       </div>
       <p style="opacity: 0.45">
-        demo: space = pause · R = restart · M = mute · H = HUD<br />
-        viewer: sleep = draaien · shift+sleep = binnenbal draaien · ctrl+sleep =
-        binnenbal verplaatsen · scroll = binnenbal grootte · ctrl+scroll = zoom ·
-        R = recenter · M = mute
+        demo: space = pause · R = restart · H = HUD<br />
+        viewer: sleep = draaien · scroll = zoom · shift+scroll = puntgrootte ·
+        1/2/3/4 = fase · P/space = play/pause · R = recenter · H = HUD
       </p>
     </div>
-    <script type="module" src="/glenz/src/main.ts"></script>
+    <script type="module" src="/dots/src/main.ts"></script>
   </body>
 </html>
