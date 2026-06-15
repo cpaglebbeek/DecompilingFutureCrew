@@ -43,9 +43,13 @@ const SCALE_FP = 64 / 32768; // VEC.ASM rotlist: scale*64 then >>15
 // size, with rotation driven by the pointer instead of the music clock.
 const VIEWER_Y = Y_BASE - 2800; // = -1300, matches the settled demo framing
 const VIEWER_ROT_PER_PX = 6; // degree-tenths of rotation per dragged pixel
+const VIEWER_MOVE_PER_PX = 18; // world units of inner-ball translate per pixel
 const VIEWER_ZOOM_PER_NOTCH = 6; // camDist units per wheel deltaY
 const VIEWER_CAM_MIN = 3800;
 const VIEWER_CAM_MAX = 13000;
+const VIEWER_SCALE_PER_NOTCH = 0.0015; // inner-ball scale factor per wheel deltaY
+const VIEWER_SCALE_MIN = 0.3;
+const VIEWER_SCALE_MAX = 3.0;
 const ROT_MOD = 3 * 3600;
 
 const trunc = Math.trunc;
@@ -115,6 +119,14 @@ export class GlenzCore {
   private vRx = 0;
   private vRy = 0;
   private vCamDist = Z_POS;
+  // inner-ball gizmo: object A can be rotated/moved/scaled independently of the
+  // outer shell (object B). Shift+drag = inner rotate, Ctrl+drag = inner move,
+  // wheel = inner scale (Ctrl+wheel = camera zoom).
+  private vRxInner = 0;
+  private vRyInner = 0;
+  private vTxInner = 0;
+  private vTyInner = 0;
+  private vScaleInner = 1;
 
   get isViewer(): boolean {
     return this.viewer;
@@ -138,22 +150,54 @@ export class GlenzCore {
     this.resetViewer();
   }
 
-  // Reset the viewer orientation + zoom to the default front-on framing.
+  // Reset the viewer orientation + zoom to the default front-on framing, and
+  // recentre the inner ball (clear all gizmo offsets).
   resetViewer(): void {
     this.vRx = 0;
     this.vRy = 0;
     this.vCamDist = Z_POS;
+    this.vRxInner = 0;
+    this.vRyInner = 0;
+    this.vTxInner = 0;
+    this.vTyInner = 0;
+    this.vScaleInner = 1;
   }
 
   // Pointer drag → accumulate rotation (degree-tenths), wrapped into range.
-  rotateBy(dxPixels: number, dyPixels: number): void {
+  // mode "all" = whole assembly (vRx/vRy); "inner-rot" = inner ball only
+  // (Shift+drag); "inner-move" = inner ball x/y translate (Ctrl+drag).
+  rotateBy(
+    dxPixels: number,
+    dyPixels: number,
+    mode: "all" | "inner-rot" | "inner-move" = "all",
+  ): void {
+    if (mode === "inner-move") {
+      this.vTxInner += dxPixels * VIEWER_MOVE_PER_PX;
+      this.vTyInner -= dyPixels * VIEWER_MOVE_PER_PX; // screen-down = world-down
+      return;
+    }
+    if (mode === "inner-rot") {
+      this.vRyInner = (this.vRyInner + dxPixels * VIEWER_ROT_PER_PX) % ROT_MOD;
+      this.vRxInner = (this.vRxInner + dyPixels * VIEWER_ROT_PER_PX) % ROT_MOD;
+      if (this.vRxInner < 0) this.vRxInner += ROT_MOD;
+      if (this.vRyInner < 0) this.vRyInner += ROT_MOD;
+      return;
+    }
     this.vRy = (this.vRy + dxPixels * VIEWER_ROT_PER_PX) % ROT_MOD;
     this.vRx = (this.vRx + dyPixels * VIEWER_ROT_PER_PX) % ROT_MOD;
     if (this.vRx < 0) this.vRx += ROT_MOD;
     if (this.vRy < 0) this.vRy += ROT_MOD;
   }
 
-  // Wheel → zoom by moving the object nearer/further (camDist), clamped.
+  // Wheel → scale the inner ball, clamped to a sane range.
+  scaleInnerBy(deltaY: number): void {
+    let s = this.vScaleInner * Math.exp(-deltaY * VIEWER_SCALE_PER_NOTCH);
+    if (s < VIEWER_SCALE_MIN) s = VIEWER_SCALE_MIN;
+    if (s > VIEWER_SCALE_MAX) s = VIEWER_SCALE_MAX;
+    this.vScaleInner = s;
+  }
+
+  // Ctrl+wheel → camera zoom by moving the object nearer/further, clamped.
   zoomBy(deltaY: number): void {
     let d = this.vCamDist + deltaY * VIEWER_ZOOM_PER_NOTCH;
     if (d < VIEWER_CAM_MIN) d = VIEWER_CAM_MIN;
@@ -294,17 +338,18 @@ export class GlenzCore {
 
   // Viewer-mode object A: settled, centred, pointer-driven orientation.
   private buildViewerA(): ObjectState {
+    const sc = 120 * SCALE_FP * this.vScaleInner;
     return {
       verts: OBJECT_A.verts,
       tris: OBJECT_A.tris,
-      rotX: this.vRx,
-      rotY: this.vRy,
+      rotX: this.vRx + this.vRxInner,
+      rotY: this.vRy + this.vRyInner,
       rotZ: 0,
-      scaleX: 120 * SCALE_FP,
-      scaleY: 120 * SCALE_FP,
-      scaleZ: 120 * SCALE_FP,
-      transX: 0,
-      transY: VIEWER_Y,
+      scaleX: sc,
+      scaleY: sc,
+      scaleZ: sc,
+      transX: this.vTxInner,
+      transY: VIEWER_Y + this.vTyInner,
       transZ: 0,
       camDist: this.vCamDist,
       brightness: 1,
