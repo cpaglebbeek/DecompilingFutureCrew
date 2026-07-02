@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         glenz: resolve(__dirname, "glenz/index.html"),
+        dots: resolve(__dirname, "dots/index.html"),
       },
     },
   },
