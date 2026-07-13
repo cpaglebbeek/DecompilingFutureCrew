@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GLENZ2 — bounce-fysica placeholder</title>
+<style>
+  html, body { margin:0; padding:0; background:#000; color:#cfb;
+               font-family: Menlo, Consolas, monospace; overflow:hidden; height:100%; }
+  #c   { display:block; width:100vw; height:100dvh; touch-action:none; }
+  #hud { position:fixed; top:8px; left:10px; line-height:1.45;
+         pointer-events:none; text-shadow:0 0 4px #000, 0 0 2px #000; font-size:13px; }
+  #hud b      { color:#fc6; }
+  #hud .keys  { color:#9ad; margin-top:4px; }
+  #hud .src   { color:#779; margin-top:2px; font-size:11px; }
+  kbd { background:#222; padding:1px 5px; border:1px solid #555;
+        border-radius:3px; color:#fff; font-size:11px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div><b>GLENZ2</b> v0.0.3 — geoptimaliseerd: cap-restitutie + sqrt-volumebehoud + 2-kleur bal-2 + auto-loop</div>
+  <div>mode <b id="mode">1</b> &middot;
+       ypos <span id="ypos">0</span> &middot;
+       vel <span id="vel">0</span> &middot;
+       jello <span id="jello">0</span> &middot;
+       bounce# <span id="bn">0</span></div>
+  <div class="keys">
+    <kbd>1</kbd> origineel-anisotroop &middot;
+    <kbd>2</kbd> Disney-vloer &middot;
+    <kbd>b</kbd> bal-2 toggle &middot;
+    <kbd>space</kbd> pauze &middot;
+    <kbd>r</kbd> reset
+  </div>
+  <div class="src">bron: SecondReality_source/GLENZ/MAIN.C — :504-535 (boing+jello), :596-616 (bal-1), :618-638 (bal-2 omhullend, pointsb + counter-rotate + sin-orbit)</div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>
