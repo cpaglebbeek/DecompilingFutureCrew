@@ -30,7 +30,7 @@ decomp/<scene>/
 | START | START | placeholder | — |
 | ALKU | ALKU | placeholder | — |
 | GLENZ | GLENZ | **ge-port v0.2.0-Trug** ✓ | `glenz/` ASM_NOTES + port.ts/vert/frag |
-| DOTS | DOTS | **ge-port v0.3.0-Pixel** (fase 1+2) ✓ | `dots/` ASM_NOTES + port.ts/vert/frag |
+| DOTS | DOTS | **standalone fase 1-4 v0.8.6-Wildfire** ✓ (scene was fase 1+2) | `decomp/dots/` ASM_NOTES + port.ts/vert/frag · standalone `dots/` |
 | 3DS | 3DS | parked (POV-Ray) | — |
 | LENS | LENS | tbd | — |
 | GRID | GRID | tbd | — |

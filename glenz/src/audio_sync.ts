@@ -1,8 +1,7 @@
 // audio_sync.ts — sound + the master clock the visuals lock to.
 //
-// Sound: a *pre-rendered* loop of the GLENZ techno track, baked once offline
-// from the real Second Reality module MUSIC1.S3M ("UnreaL ][ / PM", Purple
-// Motion / Future Crew), orders 50–60 (the +++-delimited GLENZ section). It is
+// Sound: a *pre-rendered* loop of the GLENZ techno track from the real Second
+// Reality module MUSIC1.S3M ("UnreaL ][ / PM", Purple Motion / Future Crew),
 // served as a static Opus-in-Ogg file (public/audio/glenz_loop.ogg) and played
 // gapless via an AudioBufferSourceNode(loop=true).
 //
@@ -11,9 +10,14 @@
 // merely *sync* to it via 15 +++ skip-markers in the orderlist. libopenmpt reads
 // those markers as 55 "subsongs" — so every live selectSubsong()/repeat path
 // either fragmented the song into 1–6 s stingers or chained part-music WITH the
-// interleaved SFX ("a few right notes, then fax"). Picking one order range
-// offline and rendering it linearly is the only reliable way to get the clean
-// GLENZ loop, so we bake it and ship audio, not a player.
+// interleaved SFX ("a few right notes, then fax"). So we bake it and ship audio.
+//
+// How the loop is baked (v0.8.5): the earlier cold-seek render (decodeLinear
+// from order 50 without warming the tracker tempo state) played the section too
+// slow, and a warmup render emits nothing because the +++ subsong split stops
+// play before order 50. The correct-tempo source is the reference capture
+// ref_glenz.ogg; the loop is cut from its steady groove with a matched splice +
+// 15ms equal-power crossfade. Reproducible recipe: tools/bake_glenz_loop.mjs.
 //
 // Clock: a dedicated AudioContext whose currentTime is the hardware audio clock.
 // The buffer source starts on the same user gesture and runs off the same
@@ -28,11 +32,9 @@ function basePath(): string {
 
 const DEFAULT_VOL = 0.5;
 
-// Pre-rendered GLENZ loop: MUSIC1.S3M orders 50–60, the techno section, baked
-// offline via the chiptune3 worklet's linear-stitch render (decodeLinear over
-// the +++-delimited order range), then encoded to Opus-in-Ogg. 22.5 s, spectral
-// flatness 0.0178 ≈ the captured reference's 0.0168 — i.e. measured as music,
-// not noise. Re-render: see prompts/ + the audition A/B page.
+// Pre-rendered GLENZ loop: a 25.8 s seamless loop cut from the correct-tempo
+// reference capture (ref_glenz.ogg) and encoded to Opus-in-Ogg. Re-bake with
+// tools/bake_glenz_loop.mjs; A/B against the reference on glenz/music.html.
 const GLENZ_AUDIO = "audio/glenz_loop.ogg";
 
 export class AudioSync implements AudioClock {
