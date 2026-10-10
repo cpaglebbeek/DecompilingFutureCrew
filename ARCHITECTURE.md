@@ -80,7 +80,7 @@ Geen runtime dependencies — alles is pure web-platform (WebGL2 + WebAudio).
 | Omgeving | URL | Deploy-mechaniek |
 |--|--|--|
 | GitHub Pages (primary) | https://cpaglebbeek.github.io/DecompilingFutureCrew/ | `.github/workflows/pages.yml` op push naar `main` |
-| HC55 mirror (planned) | https://horsecloud55.ddns.net/SecondReality/ | handmatige `rsync dist/` (nog niet opgezet — fase 1 of later) |
+| HC55 mirror (planned) | https://icthorsecloud.nl/SecondReality/ | handmatige `rsync dist/` (nog niet opgezet — fase 1 of later) |
 
 ## Ecosysteem-relaties
 

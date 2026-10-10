@@ -13,7 +13,7 @@ Modern browser-reinterpretatie van Second Reality (Future Crew, 1993) vanuit de 
 
 - **TypeScript** strict + Vite + WebGL2 + WebAudio (geen framework — past bij low-level demoscene-stijl)
 - **Build:** `npm run dev` / `npm run build` / `npm run preview`
-- **Hosting:** GitHub Pages (primary, auto-deploy via Actions) + HC55 mirror onder `horsecloud55.ddns.net/SecondReality/`
+- **Hosting:** GitHub Pages (primary, auto-deploy via Actions) + HC55 mirror onder `icthorsecloud.nl/SecondReality/`
 - **Licentie:** AGPL-3.0 voor code in deze repo; source (Unlicense) staat los naast de repo onder `/Users/christian/Documents/Gemini_Projects/SecondReality_source`
 
 ## Repo-conventies

@@ -35,7 +35,7 @@ npm run build    # → dist/
 ## Hosting
 
 - **Primary**: https://cpaglebbeek.github.io/DecompilingFutureCrew/ (GitHub Pages, auto-deploy via Actions)
-- **Mirror**: https://horsecloud55.ddns.net/SecondReality/ (HC55, handmatige sync)
+- **Mirror**: https://icthorsecloud.nl/SecondReality/ (HC55, handmatige sync)
 
 ## Licentie
 

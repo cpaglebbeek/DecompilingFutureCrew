@@ -4,8 +4,8 @@
 # Respecteert SHARED_INFRASTRUCTURE.md: nooit andere snippets aanraken; gedeelde
 # /etc/nginx/sites-enabled/horsecloud wordt alleen via een include uitgebreid.
 #
-# Mirror-URL: https://horsecloud55.ddns.net/SecondReality/
-# GLENZ:      https://horsecloud55.ddns.net/SecondReality/glenz/
+# Mirror-URL: https://icthorsecloud.nl/SecondReality/
+# GLENZ:      https://icthorsecloud.nl/SecondReality/glenz/
 
 set -euo pipefail
 
@@ -57,9 +57,9 @@ ssh "$SSH_HOST" "sudo systemctl reload nginx"
 
 echo "[8/8] Smoke-test"
 sleep 1
-HTTP_HOME=$(ssh "$SSH_HOST" "curl -s -o /dev/null -w '%{http_code}' https://horsecloud55.ddns.net/SecondReality/ -k -L")
-HTTP_GLENZ=$(ssh "$SSH_HOST" "curl -s -o /dev/null -w '%{http_code}' https://horsecloud55.ddns.net/SecondReality/glenz/ -k -L")
-HTTP_S3M=$(ssh "$SSH_HOST" "curl -s -o /dev/null -w '%{http_code}' https://horsecloud55.ddns.net/SecondReality/audio/MUSIC1.S3M -k")
+HTTP_HOME=$(ssh "$SSH_HOST" "curl -s -o /dev/null -w '%{http_code}' https://icthorsecloud.nl/SecondReality/ -k -L")
+HTTP_GLENZ=$(ssh "$SSH_HOST" "curl -s -o /dev/null -w '%{http_code}' https://icthorsecloud.nl/SecondReality/glenz/ -k -L")
+HTTP_S3M=$(ssh "$SSH_HOST" "curl -s -o /dev/null -w '%{http_code}' https://icthorsecloud.nl/SecondReality/audio/MUSIC1.S3M -k")
 echo "   /SecondReality/            -> $HTTP_HOME"
 echo "   /SecondReality/glenz/      -> $HTTP_GLENZ"
 echo "   /SecondReality/audio/...   -> $HTTP_S3M"
@@ -69,4 +69,4 @@ echo "Self-healing check (top-level includes in $HORSECLOUD_CONF):"
 ssh "$SSH_HOST" "sudo grep -nE 'include /etc/nginx/snippets/' '$HORSECLOUD_CONF'"
 
 echo
-echo "DONE. Live op: https://horsecloud55.ddns.net/SecondReality/  (GLENZ: /SecondReality/glenz/)"
+echo "DONE. Live op: https://icthorsecloud.nl/SecondReality/  (GLENZ: /SecondReality/glenz/)"
